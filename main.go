@@ -13,17 +13,36 @@ func main() {
 	})
 
 	api := s.Group("api")
+	day := api.Group("day")
 
-	api.Get("/today", func(c *fiber.Ctx) error {
+	day.Get("/today", func(c *fiber.Ctx) error {
 		word, err := wordle_hack.GetWordByDate(time.Now())
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			return sendError(c, fiber.StatusInternalServerError, err)
 		}
 
 		return c.JSON(fiber.Map{"word": word})
 	})
 
-	api.Get("/day", func(c *fiber.Ctx) error {
+	day.Get("/yesterday", func(c *fiber.Ctx) error {
+		word, err := wordle_hack.GetWordByDate(time.Now().Add(time.Hour * -24))
+		if err != nil {
+			return sendError(c, fiber.StatusInternalServerError, err)
+		}
+
+		return c.JSON(fiber.Map{"word": word})
+	})
+
+	day.Get("/tomorrow", func(c *fiber.Ctx) error {
+		word, err := wordle_hack.GetWordByDate(time.Now().Add(time.Hour * 24))
+		if err != nil {
+			return sendError(c, fiber.StatusInternalServerError, err)
+		}
+
+		return c.JSON(fiber.Map{"word": word})
+	})
+
+	day.Get("/", func(c *fiber.Ctx) error {
 		type Date struct {
 			Year  int
 			Month int
@@ -34,23 +53,23 @@ func main() {
 
 		err := c.QueryParser(date)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+			return sendError(c, fiber.StatusBadRequest, err)
 		}
 
 		word, err := wordle_hack.GetWordByInteger(date.Year, date.Month, date.Day)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+			return sendError(c, fiber.StatusBadRequest, err)
 		}
 
 		return c.JSON(fiber.Map{"word": word})
 	})
 
-	api.Get("/day/:dateString", func(c *fiber.Ctx) error {
+	day.Get("/:dateString", func(c *fiber.Ctx) error {
 		date := c.Params("dateString")
 
 		word, err := wordle_hack.GetWordByString(date)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+			return sendError(c, fiber.StatusBadRequest, err)
 		}
 
 		return c.JSON(fiber.Map{"word": word})
