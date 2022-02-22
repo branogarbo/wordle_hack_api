@@ -1,8 +1,6 @@
 package main
 
 import (
-	"time"
-
 	"github.com/branogarbo/wordle_hack"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,32 +13,32 @@ func main() {
 	api := s.Group("api")
 	day := api.Group("day")
 
-	day.Get("/today", func(c *fiber.Ctx) error {
-		word, err := wordle_hack.GetWordByDate(time.Now())
-		if err != nil {
-			return sendError(c, fiber.StatusInternalServerError, err)
-		}
+	// day.Get("/today", func(c *fiber.Ctx) error {
+	// 	word, err := wordle_hack.GetWordByDate(time.Now())
+	// 	if err != nil {
+	// 		return sendError(c, fiber.StatusInternalServerError, err)
+	// 	}
 
-		return c.JSON(fiber.Map{"word": word})
-	})
+	// 	return c.JSON(fiber.Map{"word": word})
+	// })
 
-	day.Get("/yesterday", func(c *fiber.Ctx) error {
-		word, err := wordle_hack.GetWordByDate(time.Now().Add(time.Hour * -24))
-		if err != nil {
-			return sendError(c, fiber.StatusInternalServerError, err)
-		}
+	// day.Get("/yesterday", func(c *fiber.Ctx) error {
+	// 	word, err := wordle_hack.GetWordByDate(time.Now().Add(time.Hour * -24))
+	// 	if err != nil {
+	// 		return sendError(c, fiber.StatusInternalServerError, err)
+	// 	}
 
-		return c.JSON(fiber.Map{"word": word})
-	})
+	// 	return c.JSON(fiber.Map{"word": word})
+	// })
 
-	day.Get("/tomorrow", func(c *fiber.Ctx) error {
-		word, err := wordle_hack.GetWordByDate(time.Now().Add(time.Hour * 24))
-		if err != nil {
-			return sendError(c, fiber.StatusInternalServerError, err)
-		}
+	// day.Get("/tomorrow", func(c *fiber.Ctx) error {
+	// 	word, err := wordle_hack.GetWordByDate(time.Now().Add(time.Hour * 24))
+	// 	if err != nil {
+	// 		return sendError(c, fiber.StatusInternalServerError, err)
+	// 	}
 
-		return c.JSON(fiber.Map{"word": word})
-	})
+	// 	return c.JSON(fiber.Map{"word": word})
+	// })
 
 	day.Get("/", func(c *fiber.Ctx) error {
 		type Date struct {
